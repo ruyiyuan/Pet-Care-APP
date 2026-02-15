@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PetCare - Safety First Platform (Demo)</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+button {
+  padding: 10px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.booking {
+  border: 1px solid #eee;
+  padding: 10px;
+  margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>PetCare — Safety First Platform (Demo)</h1>
+<p>Book day care, dog walking, boarding, or in-home vet services.</p>
+
+<div class="card">
+<h3>Create Booking</h3>
+
+<input id="owner" placeholder="Owner Name">
+<input id="pet" placeholder="Pet Name">
+
+<select id="service">
+<option>Day Care</option>
+<option>Dog Walking</option>
+<option>Boarding</option>
+<option>In-Home Vet</option>
+</select>
+
+<input type="date" id="start">
+
+<label>
+<input type="checkbox" id="cert">
+ I confirm I completed Pet Health & Safety Training
+</label>
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<button onclick="addBooking()">Submit Booking</button>
+</div>
+
+<div class="card">
+<h3>Bookings</h3>
+<div id="list"></div>
+</div>
+
+</div>
+
+<script>
+let bookings = JSON.parse(localStorage.getItem("petcare") || "[]");
+
+function save() {
+  localStorage.setItem("petcare", JSON.stringify(bookings));
+}
+
+function addBooking() {
+  let owner = document.getElementById("owner").value;
+  let pet = document.getElementById("pet").value;
+  let service = document.getElementById("service").value;
+  let start = document.getElementById("start").value;
+  let cert = document.getElementById("cert").checked;
+  let notes = document.getElementById("notes").value;
+
+  if (!owner || !pet || !start) {
+    alert("Please fill required fields.");
+    return;
+  }
+
+  if (!cert) {
+    alert("Training confirmation required.");
+    return;
+  }
+
+  bookings.push({ owner, pet, service, start, notes });
+  save();
+  render();
+}
+
+function render() {
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  bookings.forEach(b => {
+    let div = document.createElement("div");
+    div.className = "booking";
+    div.innerHTML = `
+      <strong>${b.pet}</strong> - ${b.service}<br>
+      Owner: ${b.owner}<br>
+      Date: ${b.start}<br>
+      Notes: ${b.notes}
+    `;
+    list.appendChild(div);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
